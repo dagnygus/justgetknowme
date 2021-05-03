@@ -75,8 +75,7 @@ export class SlideFiveComponent extends DnngComponentBase implements OnInit {
         })
       ).listen(this, ({ beginPosition, endPosition }) => {
         if (Math.abs(beginPosition - endPosition) > window.innerHeight / 5 &&
-            this.scrollAllawService.allaw &&
-            ends) {
+            this.scrollAllawService.allaw) {
           this.renderer.removeClass(this.elementRef.nativeElement, 'show');
         }
       });

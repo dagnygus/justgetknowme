@@ -131,7 +131,7 @@ export class AppComponent extends DnngComponentBase implements OnInit {
           }),
           delay(300)
         ).listen(this, ({ beginPosition, endPosition }) => {
-          if (Math.abs(beginPosition - endPosition) > window.innerHeight / 5 && ends) {
+          if (Math.abs(beginPosition - endPosition) > window.innerHeight / 5) {
             if (beginPosition - endPosition > 0) {
               if (this.currentPath !== this.paths.length - 1) {
                 this.currentPath++;
