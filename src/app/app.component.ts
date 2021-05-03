@@ -93,6 +93,7 @@ export class AppComponent extends DnngComponentBase implements OnInit {
       this.ngZone.runOutsideAngular(() => {
         fromEvent(window, 'touchstart').listen(this, (event) => {
           beginPosition = (event as TouchEvent).touches[0].pageY;
+          alert('touching');
         });
         fromEvent(window, 'touchend').pipe(
           tap((event) => {
