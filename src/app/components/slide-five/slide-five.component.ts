@@ -53,7 +53,7 @@ export class SlideFiveComponent extends DnngComponentBase implements OnInit {
     if (isPlatformBrowser(this.platformId)) {
       this.ngZone.runOutsideAngular(() => {
         fromEvent(window, 'touchmove').pipe(
-          throttleTime(150)
+          throttleTime(50)
         ).listen(this, event => {
           const e = event as TouchEvent;
           if (!begin) {
