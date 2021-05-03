@@ -54,7 +54,7 @@ export class SlideTwoComponent extends DnngComponentBase implements OnInit {
           beginPosition = (event as TouchEvent).touches[0].clientY;
         });
         fromEvent(window, 'touchend').listen(this, (event) => {
-          endPosition = (event as TouchEvent).touches[0].clientY;
+          endPosition = (event as TouchEvent).touches[(event as TouchEvent).touches.length - 1].clientY;
           if (Math.abs(beginPosition - endPosition) > window.innerHeight / 5
               && this.scrollAllawService.allaw) {
             this.renderer.removeClass(this.elementRef.nativeElement, 'show');
