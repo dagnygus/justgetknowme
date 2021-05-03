@@ -151,7 +151,7 @@ export class SlideOneComponent extends DnngComponentBase implements AfterViewIni
         } else {
           begin = false;
           endPosition = e.touches[e.touches.length - 1].clientY;
-          if (Math.abs(startPosition - endPosition) > window.innerHeight / 4) {
+          if (Math.abs(startPosition - endPosition) > window.innerHeight / 5) {
             if (!this.scrollAllawService.allaw) { return; }
             this.renderer.removeClass(this.elementRef.nativeElement, 'show');
           }

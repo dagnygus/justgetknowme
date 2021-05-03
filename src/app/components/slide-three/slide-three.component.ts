@@ -53,7 +53,7 @@ export class SlideThreeComponent extends DnngComponentBase implements OnInit {
     if (isPlatformBrowser(this.platformId)) {
       this.ngZone.runOutsideAngular(() => {
         fromEvent(window, 'touchmove').pipe(
-          throttleTime(50)
+          throttleTime(100)
         ).listen(this, event => {
           const e = event as TouchEvent;
           if (!begin) {
@@ -62,7 +62,7 @@ export class SlideThreeComponent extends DnngComponentBase implements OnInit {
           } else {
             begin = false;
             endPosition = e.touches[e.touches.length - 1].clientY;
-            if (Math.abs(startPosition - endPosition) > window.innerHeight / 4) {
+            if (Math.abs(startPosition - endPosition) > window.innerHeight / 5) {
               if (!this.scrollAllawService.allaw) { return; }
               this.renderer.removeClass(this.elementRef.nativeElement, 'show');
             }
