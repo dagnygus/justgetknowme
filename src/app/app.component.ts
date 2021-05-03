@@ -95,24 +95,24 @@ export class AppComponent extends DnngComponentBase implements OnInit {
           beginPosition = (event as TouchEvent).touches[0].pageY;
         });
         fromEvent(window, 'touchend').pipe(
-          tap((event) => {
-            endPosition = (event as TouchEvent).touches[0].pageY;
-            if (Math.abs(beginPosition - endPosition) > window.innerHeight / 5) {
-              if (beginPosition - endPosition > 0) {
-                if (this.currentPath === this.paths.length - 1) {
-                  this.scrollAllawService.allaw = false;
-                } else {
-                  this.scrollAllawService.allaw = true;
-                }
-              } else {
-                if (this.currentPath === 0) {
-                  this.scrollAllawService.allaw = false;
-                } else {
-                  this.scrollAllawService.allaw = true;
-                }
-              }
-            }
-          }),
+          // tap((event) => {
+          //   endPosition = (event as TouchEvent).touches[0].pageY;
+          //   if (Math.abs(beginPosition - endPosition) > window.innerHeight / 5) {
+          //     if (beginPosition - endPosition > 0) {
+          //       if (this.currentPath === this.paths.length - 1) {
+          //         this.scrollAllawService.allaw = false;
+          //       } else {
+          //         this.scrollAllawService.allaw = true;
+          //       }
+          //     } else {
+          //       if (this.currentPath === 0) {
+          //         this.scrollAllawService.allaw = false;
+          //       } else {
+          //         this.scrollAllawService.allaw = true;
+          //       }
+          //     }
+          //   }
+          // }),
         ).listen(this, () => {
           alert('value is ' + (beginPosition - endPosition));
           // if (Math.abs(beginPosition - endPosition) > window.innerHeight / 5) {
