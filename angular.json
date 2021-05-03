@@ -127,5 +127,8 @@
       }
     }
   },
-  "defaultProject": "justgetknowme"
+  "defaultProject": "justgetknowme",
+  "cli": {
+    "analytics": false
+  }
 }

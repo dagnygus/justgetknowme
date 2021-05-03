@@ -1,0 +1,30 @@
+:host {
+  grid-column: 1 / span 1;
+  grid-row: 1 / span 1;
+  background-color: rgba(255, 255, 255, 0.3);
+  grid-row: 1 / span 1;
+  grid-column: 1 / span 1;
+  backdrop-filter: blur(3px);
+  border-radius: 16px;
+  width: 90%;
+  min-height: 50%;
+  display: grid;
+  padding: 32px;
+  grid-template-rows: auto auto auto;
+  gap: 6px;
+  opacity: 0;
+  max-width: 800px;
+  transition: opacity 300ms ease-out;
+}
+
+:host(.show) {
+  opacity: 1;
+}
+
+h2 {
+  text-align: center;
+}
+
+li {
+  margin: 8px;
+}
