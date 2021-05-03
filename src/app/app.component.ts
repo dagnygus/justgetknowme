@@ -92,7 +92,7 @@ export class AppComponent extends DnngComponentBase implements OnInit {
     if (isPlatformBrowser(this._platformId)) {
       this.ngZone.runOutsideAngular(() => {
         fromEvent(window, 'touchstart').listen(this, (event) => {
-          beginPosition = (event as TouchEvent).touches[0].pageY;
+          beginPosition = (event as TouchEvent).touches[0].clientY;
         });
         fromEvent(window, 'touchend').pipe(
           // tap((event) => {
@@ -113,7 +113,8 @@ export class AppComponent extends DnngComponentBase implements OnInit {
           //     }
           //   }
           // }),
-        ).listen(this, () => {
+        ).listen(this, (event) => {
+          endPosition = (event as TouchEvent).touches[0].clientY;
           alert('value is ' + (beginPosition - endPosition));
           // if (Math.abs(beginPosition - endPosition) > window.innerHeight / 5) {
           //   if (beginPosition - endPosition > 0) {
