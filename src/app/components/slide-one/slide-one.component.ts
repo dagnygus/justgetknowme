@@ -142,7 +142,7 @@ export class SlideOneComponent extends DnngComponentBase implements AfterViewIni
     let endPosition = 0;
     if (isPlatformBrowser(this.platformId)) {
       fromEvent(window, 'touchmove').pipe(
-        throttleTime(50)
+        throttleTime(200)
       ).listen(this, event => {
         const e = event as TouchEvent;
         if (!begin) {
