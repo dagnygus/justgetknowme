@@ -47,37 +47,20 @@ export class SlideFiveComponent extends DnngComponentBase implements OnInit {
   }
 
   private onTouchMove(): void {
-    let begin = false;
-    let ends = false;
+    let beginPosition = 0;
+    let endPosition = 0;
     if (isPlatformBrowser(this.platformId)) {
       this.ngZone.runOutsideAngular(() => {
-        fromEvent(window, 'touchstart').pipe(
-          tap(() => {
-            begin = true;
-            ends = false;
-          }),
-          delay(100)
-        ).listen(this, () => {
-          begin = false;
-          ends = true;
+        fromEvent(window, 'touchstart').listen(this, (event) => {
+          beginPosition = (event as TouchEvent).touches[0].clientY;
         });
-      });
-
-      zip(
-        fromEvent(window, 'touchstart'),
-        fromEvent(window, 'touchend')
-      ).pipe(
-        map(([event1, event2]) => {
-          return {
-            beginPosition: (event1 as TouchEvent).touches[0].clientY,
-            endPosition: (event2 as TouchEvent).touches[(event2 as TouchEvent).touches.length - 1].clientY
-          };
-        })
-      ).listen(this, ({ beginPosition, endPosition }) => {
-        if (Math.abs(beginPosition - endPosition) > window.innerHeight / 5 &&
-            this.scrollAllawService.allaw) {
-          this.renderer.removeClass(this.elementRef.nativeElement, 'show');
-        }
+        fromEvent(window, 'touchend').listen(this, (event) => {
+          endPosition = (event as TouchEvent).touches[0].clientY;
+          if (Math.abs(beginPosition - endPosition) > window.innerHeight / 5
+              && this.scrollAllawService.allaw) {
+            this.renderer.removeClass(this.elementRef.nativeElement, 'show');
+          }
+        });
       });
     }
   }

@@ -86,34 +86,18 @@ export class AppComponent extends DnngComponentBase implements OnInit {
 
   private onTouchMove(): void {
 
-    let begin = false;
-    let ends = false;
+    let beginPosition = 0;
+    let endPosition = 0;
 
     if (isPlatformBrowser(this._platformId)) {
       this.ngZone.runOutsideAngular(() => {
-        fromEvent(window, 'touchstart').pipe(
-          tap(() => {
-            begin = true;
-            ends = true;
-          }),
-          delay(100)
-        ).listen(this, () => {
-          begin = false;
-          ends = true;
+        fromEvent(window, 'touchstart').listen(this, (event) => {
+          beginPosition = (event as TouchEvent).touches[0].clientY;
         });
-
-        zip(
-          fromEvent(window, 'touchstart'),
-          fromEvent(window, 'touchend')
-        ).pipe(
-          map(([event1, event2]) => {
-            return {
-              beginPosition: (event1 as TouchEvent).touches[0].clientY,
-              endPosition: (event2 as TouchEvent).touches[(event2 as TouchEvent).touches.length - 1].clientY
-            };
-          }),
-          tap(({ beginPosition, endPosition }) => {
-            if (Math.abs(beginPosition - endPosition) > window.innerHeight / 5 && ends) {
+        fromEvent(window, 'touchend').pipe(
+          tap((event) => {
+            endPosition = (event as TouchEvent).touches[0].clientY;
+            if (Math.abs(beginPosition - endPosition) > window.innerHeight / 5) {
               if (beginPosition - endPosition > 0) {
                 if (this.currentPath === this.paths.length - 1) {
                   this.scrollAllawService.allaw = false;
@@ -130,7 +114,7 @@ export class AppComponent extends DnngComponentBase implements OnInit {
             }
           }),
           delay(300)
-        ).listen(this, ({ beginPosition, endPosition }) => {
+        ).listen(this, () => {
           if (Math.abs(beginPosition - endPosition) > window.innerHeight / 5) {
             if (beginPosition - endPosition > 0) {
               if (this.currentPath !== this.paths.length - 1) {
@@ -147,54 +131,6 @@ export class AppComponent extends DnngComponentBase implements OnInit {
           }
         });
       });
-
-      // this.ngZone.runOutsideAngular(() => {
-      //   fromEvent(window, 'touchmove').pipe(
-      //     throttleTime(100),
-      //     tap((event) => {
-      //       const e = event as TouchEvent;
-      //       if (!begin) {
-      //         begin = true;
-      //         ends = false;
-      //         startPosition = e.touches[0].clientY;
-      //       } else {
-      //         begin = false;
-      //         ends = true;
-      //         endPosition = e.touches[e.touches.length - 1].clientY;
-      //       }
-
-      //       if (ends && Math.abs(startPosition - endPosition) > window.innerHeight / 5) {
-      //         if (startPosition - endPosition < 0) {
-      //           if (this.currentPath === this.paths.length - 1) {
-      //             this.scrollAllawService.allaw = false;
-      //           } else {
-      //             this.scrollAllawService.allaw = true;
-      //           }
-      //         } else {
-      //           if (startPosition - endPosition > 0) {
-      //             if (this.currentPath === 0) {
-      //               this.scrollAllawService.allaw = false;
-      //             } else {
-      //               this.scrollAllawService.allaw = true;
-      //             }
-      //           }
-      //         }
-      //       }
-      //     }),
-      //     delay(300)
-      //   ).listen(this, (event) => {
-      //       if (ends && Math.abs(startPosition - endPosition) > window.innerHeight / 5) {
-      //         this.ngZone.run(() => {
-      //           if (startPosition - endPosition < 0) {
-      //             this.currentPath++;
-      //           } else {
-      //             this.currentPath--;
-      //           }
-      //           this._router.navigate([this.paths[this.currentPath]]);
-      //         });
-      //       }
-      //   });
-      // });
     }
   }
 }
