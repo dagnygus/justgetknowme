@@ -30,6 +30,7 @@ export class SlideThreeComponent extends DnngComponentBase implements OnInit {
     });
 
     this.onWheel();
+    this.onTouchMove();
   }
 
   private onWheel(): void {
@@ -40,6 +41,32 @@ export class SlideThreeComponent extends DnngComponentBase implements OnInit {
         ).listen(this, () => {
           if (!this.scrollAllawService.allaw) { return; }
           this.renderer.removeClass(this.elementRef.nativeElement, 'show');
+        });
+      });
+    }
+  }
+
+  private onTouchMove(): void {
+    let begin = false;
+    let startPosition = 0;
+    let endPosition = 0;
+    if (isPlatformBrowser(this.platformId)) {
+      this.ngZone.runOutsideAngular(() => {
+        fromEvent(window, 'touchmove').pipe(
+          throttleTime(150)
+        ).listen(this, event => {
+          const e = event as TouchEvent;
+          if (!begin) {
+            begin = true;
+            startPosition = e.touches[0].clientY;
+          } else {
+            begin = false;
+            endPosition = e.touches[e.touches.length - 1].clientY;
+            if (Math.abs(startPosition - endPosition) > window.innerHeight / 4) {
+              if (!this.scrollAllawService.allaw) { return; }
+              this.renderer.removeClass(this.elementRef.nativeElement, 'show');
+            }
+          }
         });
       });
     }

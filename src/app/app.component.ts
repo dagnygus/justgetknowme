@@ -44,15 +44,26 @@ export class AppComponent extends DnngComponentBase implements OnInit {
       }
     });
     this.onWheel();
+    this.onTouchMove();
   }
 
   private onWheel(): void {
     if (isPlatformBrowser(this._platformId)) {
       this.ngZone.runOutsideAngular(() => {
         fromEvent(window, 'wheel').pipe(
-          tap(() => {
-            if (this.currentPath === this.paths.length - 1 || this.currentPath === 0) {
-              this.scrollAllawService.allaw = false;
+          tap((event) => {
+            if ((event as WheelEvent).deltaY > 0) {
+              if (this.currentPath === this.paths.length - 1) {
+                this.scrollAllawService.allaw = false;
+              } else {
+                this.scrollAllawService.allaw = true;
+              }
+            } else {
+              if (this.currentPath === 0) {
+                this.scrollAllawService.allaw = false;
+              } else {
+                this.scrollAllawService.allaw = true;
+              }
             }
           }),
           delay(300),
@@ -61,15 +72,81 @@ export class AppComponent extends DnngComponentBase implements OnInit {
           this.ngZone.run(() => {
             if ((event as WheelEvent).deltaY > 0) {
               if (this.currentPath === this.paths.length - 1) { return; }
-              this.scrollAllawService.allaw = true;
               this.currentPath++;
             } else {
               if (this.currentPath === 0) { return; }
-              this.scrollAllawService.allaw = true;
               this.currentPath--;
             }
             this._router.navigate([this.paths[this.currentPath]]);
           });
+        });
+      });
+    }
+  }
+
+  private onTouchMove(): void {
+
+    let begin = true;
+    let startPosition = 0;
+    let endPosition = 0;
+
+    if (isPlatformBrowser(this._platformId)) {
+      this.ngZone.runOutsideAngular(() => {
+        fromEvent(window, 'touchmove').pipe(
+          throttleTime(150),
+          tap((event) => {
+            const e = event as TouchEvent;
+            if (!begin) {
+              begin = true;
+              startPosition = e.touches[0].clientY;
+              return;
+            } else {
+              begin = false;
+              endPosition = e.touches[e.touches.length - 1].clientY;
+            }
+
+            if (Math.abs(startPosition - endPosition) > window.innerHeight / 4) {
+              if (startPosition - endPosition < 0) {
+                if (this.currentPath === this.paths.length - 1) {
+                  this.scrollAllawService.allaw = false;
+                } else {
+                  this.scrollAllawService.allaw = true;
+                }
+              } else {
+                if (startPosition - endPosition > 0) {
+                  if (this.currentPath === 0) {
+                    this.scrollAllawService.allaw = false;
+                  } else {
+                    this.scrollAllawService.allaw = true;
+                  }
+                }
+              }
+            }
+          }),
+          delay(300)
+        ).listen(this, (event) => {
+          const e = event as TouchEvent;
+          if (!begin) {
+            begin = true;
+            startPosition = e.touches[0].clientY;
+          } else {
+            begin = false;
+            endPosition = e.touches[e.touches.length - 1].clientY;
+            if (Math.abs(startPosition - endPosition) > window.innerHeight / 4) {
+              this.ngZone.run(() => {
+                if (startPosition - endPosition < 0) {
+                  if (this.currentPath === this.paths.length - 1) { return; }
+                  this.scrollAllawService.allaw = true;
+                  this.currentPath++;
+                } else {
+                  if (startPosition - endPosition > 0) { return; }
+                  this.scrollAllawService.allaw = true;
+                  this.currentPath--;
+                }
+                this._router.navigate([this.paths[this.currentPath]]);
+              });
+            }
+          }
         });
       });
     }
