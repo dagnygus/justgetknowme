@@ -135,13 +135,13 @@ export class AppComponent extends DnngComponentBase implements OnInit {
             if (Math.abs(startPosition - endPosition) > window.innerHeight / 4) {
               this.ngZone.run(() => {
                 if (startPosition - endPosition < 0) {
-                  if (this.currentPath === this.paths.length - 1) { return; }
                   this.scrollAllawService.allaw = true;
                   this.currentPath++;
                 } else {
-                  if (startPosition - endPosition > 0) { return; }
-                  this.scrollAllawService.allaw = true;
-                  this.currentPath--;
+                  if (startPosition - endPosition > 0) {
+                    this.scrollAllawService.allaw = true;
+                    this.currentPath--;
+                  }
                 }
                 this._router.navigate([this.paths[this.currentPath]]);
               });
