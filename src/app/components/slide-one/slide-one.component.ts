@@ -11,8 +11,8 @@ import { ChangeDetectionStrategy,
          PLATFORM_ID,
          AfterViewInit,
          OnInit} from '@angular/core';
-import { fromEvent } from 'rxjs';
-import { delay, throttleTime } from 'rxjs/operators';
+import { fromEvent, zip } from 'rxjs';
+import { delay, map, tap, throttleTime } from 'rxjs/operators';
 import { DnngComponentBase } from 'src/app/component-base/component-base';
 
 @Component({
@@ -138,23 +138,36 @@ export class SlideOneComponent extends DnngComponentBase implements AfterViewIni
 
   private onTouchMove(): void {
     let begin = false;
-    let startPosition = 0;
-    let endPosition = 0;
+    let ends = false;
     if (isPlatformBrowser(this.platformId)) {
-      fromEvent(window, 'touchmove').pipe(
-        throttleTime(100)
-      ).listen(this, event => {
-        const e = event as TouchEvent;
-        if (!begin) {
-          begin = true;
-          startPosition = e.touches[0].clientY;
-        } else {
+      this.ngZone.runOutsideAngular(() => {
+        fromEvent(window, 'touchstart').pipe(
+          tap(() => {
+            begin = true;
+            ends = false;
+          }),
+          delay(100)
+        ).listen(this, () => {
           begin = false;
-          endPosition = e.touches[e.touches.length - 1].clientY;
-          if (Math.abs(startPosition - endPosition) > window.innerHeight / 5) {
-            if (!this.scrollAllawService.allaw) { return; }
-            this.renderer.removeClass(this.elementRef.nativeElement, 'show');
-          }
+          ends = true;
+        });
+      });
+
+      zip(
+        fromEvent(window, 'touchstart'),
+        fromEvent(window, 'touchend')
+      ).pipe(
+        map(([event1, event2]) => {
+          return {
+            beginPosition: (event1 as TouchEvent).touches[0].clientY,
+            endPosition: (event2 as TouchEvent).touches[(event2 as TouchEvent).touches.length - 1].clientY
+          };
+        })
+      ).listen(this, ({ beginPosition, endPosition }) => {
+        if (Math.abs(beginPosition - endPosition) > window.innerHeight / 5 &&
+            this.scrollAllawService.allaw &&
+            ends) {
+          this.renderer.removeClass(this.elementRef.nativeElement, 'show');
         }
       });
     }

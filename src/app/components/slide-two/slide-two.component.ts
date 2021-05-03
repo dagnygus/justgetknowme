@@ -1,9 +1,9 @@
 import { ScrollAllawService } from './../../services/scroll-allaw.service';
-import { throttleTime } from 'rxjs/operators';
+import { throttleTime, tap, delay, map } from 'rxjs/operators';
 import { isPlatformBrowser } from '@angular/common';
 import { DnngComponentBase } from 'src/app/component-base/component-base';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, NgZone, OnInit, Renderer2, PLATFORM_ID } from '@angular/core';
-import { fromEvent } from 'rxjs';
+import { fromEvent, zip } from 'rxjs';
 
 @Component({
   selector: 'app-slide-two',
@@ -47,26 +47,37 @@ export class SlideTwoComponent extends DnngComponentBase implements OnInit {
 
   private onTouchMove(): void {
     let begin = false;
-    let startPosition = 0;
-    let endPosition = 0;
+    let ends = false;
     if (isPlatformBrowser(this.platformId)) {
       this.ngZone.runOutsideAngular(() => {
-        fromEvent(window, 'touchmove').pipe(
-          throttleTime(100)
-        ).listen(this, event => {
-          const e = event as TouchEvent;
-          if (!begin) {
+        fromEvent(window, 'touchstart').pipe(
+          tap(() => {
             begin = true;
-            startPosition = e.touches[0].clientY;
-          } else {
-            begin = false;
-            endPosition = e.touches[e.touches.length - 1].clientY;
-            if (Math.abs(startPosition - endPosition) > window.innerHeight / 5) {
-              if (!this.scrollAllawService.allaw) { return; }
-              this.renderer.removeClass(this.elementRef.nativeElement, 'show');
-            }
-          }
+            ends = false;
+          }),
+          delay(100)
+        ).listen(this, () => {
+          begin = false;
+          ends = true;
         });
+      });
+
+      zip(
+        fromEvent(window, 'touchstart'),
+        fromEvent(window, 'touchend')
+      ).pipe(
+        map(([event1, event2]) => {
+          return {
+            beginPosition: (event1 as TouchEvent).touches[0].clientY,
+            endPosition: (event2 as TouchEvent).touches[(event2 as TouchEvent).touches.length - 1].clientY
+          };
+        })
+      ).listen(this, ({ beginPosition, endPosition }) => {
+        if (Math.abs(beginPosition - endPosition) > window.innerHeight / 5 &&
+            this.scrollAllawService.allaw &&
+            ends) {
+          this.renderer.removeClass(this.elementRef.nativeElement, 'show');
+        }
       });
     }
   }
