@@ -125,13 +125,6 @@ export class AppComponent extends DnngComponentBase implements OnInit {
           }),
           delay(300)
         ).listen(this, (event) => {
-          const e = event as TouchEvent;
-          if (!begin) {
-            begin = true;
-            startPosition = e.touches[0].clientY;
-          } else {
-            begin = false;
-            endPosition = e.touches[e.touches.length - 1].clientY;
             if (Math.abs(startPosition - endPosition) > window.innerHeight / 5) {
               this.ngZone.run(() => {
                 if (startPosition - endPosition < 0) {
@@ -142,7 +135,6 @@ export class AppComponent extends DnngComponentBase implements OnInit {
                 this._router.navigate([this.paths[this.currentPath]]);
               });
             }
-          }
         });
       });
     }
