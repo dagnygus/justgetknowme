@@ -92,11 +92,11 @@ export class AppComponent extends DnngComponentBase implements OnInit {
     if (isPlatformBrowser(this._platformId)) {
       this.ngZone.runOutsideAngular(() => {
         fromEvent(window, 'touchstart').listen(this, (event) => {
-          beginPosition = (event as TouchEvent).touches[0].clientY;
+          beginPosition = (event as TouchEvent).touches[0].pageY;
         });
         fromEvent(window, 'touchend').pipe(
           tap((event) => {
-            endPosition = (event as TouchEvent).touches[0].clientY;
+            endPosition = (event as TouchEvent).touches[0].pageY;
             if (Math.abs(beginPosition - endPosition) > window.innerHeight / 5) {
               if (beginPosition - endPosition > 0) {
                 if (this.currentPath === this.paths.length - 1) {

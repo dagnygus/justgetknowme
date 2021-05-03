@@ -142,10 +142,10 @@ export class SlideOneComponent extends DnngComponentBase implements AfterViewIni
     if (isPlatformBrowser(this.platformId)) {
       this.ngZone.runOutsideAngular(() => {
         fromEvent(window, 'touchstart').listen(this, (event) => {
-          beginPosition = (event as TouchEvent).touches[0].clientY;
+          beginPosition = (event as TouchEvent).touches[0].pageY;
         });
         fromEvent(window, 'touchend').listen(this, (event) => {
-          endPosition = (event as TouchEvent).touches[0].clientY;
+          endPosition = (event as TouchEvent).touches[0].pageY;
           if (Math.abs(beginPosition - endPosition) > window.innerHeight / 5
               && this.scrollAllawService.allaw) {
             this.renderer.removeClass(this.elementRef.nativeElement, 'show');
