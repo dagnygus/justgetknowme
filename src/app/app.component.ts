@@ -86,7 +86,8 @@ export class AppComponent extends DnngComponentBase implements OnInit {
 
   private onTouchMove(): void {
 
-    let begin = true;
+    let begin = false;
+    let ends = false;
     let startPosition = 0;
     let endPosition = 0;
 
@@ -98,14 +99,15 @@ export class AppComponent extends DnngComponentBase implements OnInit {
             const e = event as TouchEvent;
             if (!begin) {
               begin = true;
+              ends = false;
               startPosition = e.touches[0].clientY;
-              return;
             } else {
               begin = false;
+              ends = true;
               endPosition = e.touches[e.touches.length - 1].clientY;
             }
 
-            if (Math.abs(startPosition - endPosition) > window.innerHeight / 5) {
+            if (ends && Math.abs(startPosition - endPosition) > window.innerHeight / 5) {
               if (startPosition - endPosition < 0) {
                 if (this.currentPath === this.paths.length - 1) {
                   this.scrollAllawService.allaw = false;
@@ -125,7 +127,7 @@ export class AppComponent extends DnngComponentBase implements OnInit {
           }),
           delay(300)
         ).listen(this, (event) => {
-            if (Math.abs(startPosition - endPosition) > window.innerHeight / 5) {
+            if (ends && Math.abs(startPosition - endPosition) > window.innerHeight / 5) {
               this.ngZone.run(() => {
                 if (startPosition - endPosition < 0) {
                   this.currentPath++;
