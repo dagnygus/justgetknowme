@@ -94,7 +94,7 @@ export class AppComponent extends DnngComponentBase implements OnInit {
     if (isPlatformBrowser(this._platformId)) {
       this.ngZone.runOutsideAngular(() => {
         fromEvent(window, 'touchmove').pipe(
-          throttleTime(200),
+          throttleTime(100),
           tap((event) => {
             const e = event as TouchEvent;
             if (!begin) {
