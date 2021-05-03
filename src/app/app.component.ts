@@ -105,7 +105,7 @@ export class AppComponent extends DnngComponentBase implements OnInit {
               endPosition = e.touches[e.touches.length - 1].clientY;
             }
 
-            if (Math.abs(startPosition - endPosition) > window.innerHeight / 4) {
+            if (Math.abs(startPosition - endPosition) > window.innerHeight / 5) {
               if (startPosition - endPosition < 0) {
                 if (this.currentPath === this.paths.length - 1) {
                   this.scrollAllawService.allaw = false;
