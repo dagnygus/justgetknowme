@@ -114,8 +114,9 @@ export class AppComponent extends DnngComponentBase implements OnInit {
           //   }
           // }),
         ).listen(this, (event) => {
-          endPosition = (event as TouchEvent).touches[0].pageY;
-          alert('value is ' + (beginPosition - endPosition));
+          alert(JSON.stringify(event));
+          // endPosition = (event as TouchEvent).touches[0].pageY;
+          // alert('value is ' + (beginPosition - endPosition));
           // if (Math.abs(beginPosition - endPosition) > window.innerHeight / 5) {
           //   if (beginPosition - endPosition > 0) {
           //     if (this.currentPath !== this.paths.length - 1) {
