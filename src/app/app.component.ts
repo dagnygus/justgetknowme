@@ -89,6 +89,7 @@ export class AppComponent extends DnngComponentBase implements OnInit {
     let beginPosition = 0;
     let endPosition = 0;
     let allawTouch = false;
+    let isMoving = false;
 
     if (isPlatformBrowser(this._platformId)) {
       this.ngZone.runOutsideAngular(() => {
@@ -101,9 +102,10 @@ export class AppComponent extends DnngComponentBase implements OnInit {
         });
         fromEvent(window, 'touchmove').listen(this, (event) => {
           endPosition = (event as TouchEvent).touches[0].clientY;
+          isMoving = true;
         });
         fromEvent(window, 'touchend').listen(this, (event) => {
-          if (Math.abs(beginPosition - endPosition) > window.innerHeight / 5 && allawTouch) {
+          if (Math.abs(beginPosition - endPosition) > window.innerHeight / 5 && allawTouch && isMoving) {
             const lenght = beginPosition - endPosition;
             if (lenght > 0) {
               if (this.currentPath === this.paths.length - 1) {
@@ -118,6 +120,8 @@ export class AppComponent extends DnngComponentBase implements OnInit {
                 this.scrollAllawService.allaw = true;
               }
             }
+
+            isMoving = false;
 
             setTimeout(() => {
               if (lenght > 0) {

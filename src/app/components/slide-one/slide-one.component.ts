@@ -140,6 +140,7 @@ export class SlideOneComponent extends DnngComponentBase implements AfterViewIni
     let beginPosition = 0;
     let endPosition = 0;
     let allawScroll = false;
+    let isMoving = false;
     if (isPlatformBrowser(this.platformId)) {
       this.ngZone.runOutsideAngular(() => {
         fromEvent(window, 'touchstart').listen(this, (event) => {
@@ -151,11 +152,13 @@ export class SlideOneComponent extends DnngComponentBase implements AfterViewIni
         });
         fromEvent(window, 'touchmove').listen(this, (event) => {
           endPosition = (event as TouchEvent).touches[0].clientY;
+          isMoving = true;
         });
         fromEvent(window, 'touchend').listen(this, () => {
           if (Math.abs(beginPosition - endPosition) > window.innerHeight / 5 &&
-              this.scrollAllawService.allaw && allawScroll) {
+              this.scrollAllawService.allaw && allawScroll && isMoving) {
             this.renderer.removeClass(this.elementRef.nativeElement, 'show');
+            isMoving = false;
           }
         });
       });
