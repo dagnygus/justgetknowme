@@ -88,49 +88,52 @@ export class AppComponent extends DnngComponentBase implements OnInit {
 
     let beginPosition = 0;
     let endPosition = 0;
+    let allawTouch = false;
 
     if (isPlatformBrowser(this._platformId)) {
       this.ngZone.runOutsideAngular(() => {
         fromEvent(window, 'touchstart').listen(this, (event) => {
-          beginPosition = (event as TouchEvent).touches[0].pageY;
+          beginPosition = (event as TouchEvent).touches[0].clientY;
+          allawTouch = true;
+          setTimeout(() => {
+            allawTouch = false;
+          }, 100);
         });
-        fromEvent(window, 'touchend').pipe(
-          // tap((event) => {
-          //   endPosition = (event as TouchEvent).touches[0].pageY;
-          //   if (Math.abs(beginPosition - endPosition) > window.innerHeight / 5) {
-          //     if (beginPosition - endPosition > 0) {
-          //       if (this.currentPath === this.paths.length - 1) {
-          //         this.scrollAllawService.allaw = false;
-          //       } else {
-          //         this.scrollAllawService.allaw = true;
-          //       }
-          //     } else {
-          //       if (this.currentPath === 0) {
-          //         this.scrollAllawService.allaw = false;
-          //       } else {
-          //         this.scrollAllawService.allaw = true;
-          //       }
-          //     }
-          //   }
-          // }),
-        ).listen(this, (event) => {
-          alert(JSON.stringify(event));
-          // endPosition = (event as TouchEvent).touches[0].pageY;
-          // alert('value is ' + (beginPosition - endPosition));
-          // if (Math.abs(beginPosition - endPosition) > window.innerHeight / 5) {
-          //   if (beginPosition - endPosition > 0) {
-          //     if (this.currentPath !== this.paths.length - 1) {
-          //       this.currentPath++;
-          //     }
-          //   } else {
-          //     if (this.currentPath !== 0) {
-          //       this.currentPath--;
-          //     }
-          //   }
-          //   this.ngZone.run(() => {
-          //     this._router.navigate([this.paths[this.currentPath]]);
-          //   });
-          // }
+        fromEvent(window, 'touchmove').listen(this, (event) => {
+          endPosition = (event as TouchEvent).touches[0].clientY;
+        });
+        fromEvent(window, 'touchend').listen(this, (event) => {
+          if (Math.abs(beginPosition - endPosition) > window.innerHeight / 5 && allawTouch) {
+            const lenght = beginPosition - endPosition;
+            if (lenght > 0) {
+              if (this.currentPath === this.paths.length - 1) {
+                this.scrollAllawService.allaw = false;
+              } else {
+                this.scrollAllawService.allaw = true;
+              }
+            } else {
+              if (this.currentPath === 0) {
+                this.scrollAllawService.allaw = false;
+              } else {
+                this.scrollAllawService.allaw = true;
+              }
+            }
+
+            setTimeout(() => {
+              if (lenght > 0) {
+                if (this.currentPath !== this.paths.length - 1) {
+                  this.currentPath++;
+                }
+              } else {
+                if (this.currentPath !== 0) {
+                  this.currentPath--;
+                }
+              }
+              this.ngZone.run(() => {
+                this._router.navigate([this.paths[this.currentPath]]);
+              });
+            }, 300);
+          }
         });
       });
     }

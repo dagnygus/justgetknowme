@@ -49,15 +49,22 @@ export class SlideFiveComponent extends DnngComponentBase implements OnInit {
   private onTouchMove(): void {
     let beginPosition = 0;
     let endPosition = 0;
+    let allawScroll = false;
     if (isPlatformBrowser(this.platformId)) {
       this.ngZone.runOutsideAngular(() => {
         fromEvent(window, 'touchstart').listen(this, (event) => {
-          beginPosition = (event as TouchEvent).touches[0].pageY;
+          beginPosition = (event as TouchEvent).touches[0].clientY;
+          allawScroll = true;
+          setTimeout(() => {
+            allawScroll = false;
+          }, 100);
         });
-        fromEvent(window, 'touchend').listen(this, (event) => {
-          endPosition = (event as TouchEvent).touches[0].pageY;
-          if (Math.abs(beginPosition - endPosition) > window.innerHeight / 5
-              && this.scrollAllawService.allaw) {
+        fromEvent(window, 'touchmove').listen(this, (event) => {
+          endPosition = (event as TouchEvent).touches[0].clientY;
+        });
+        fromEvent(window, 'touchend').listen(this, () => {
+          if (Math.abs(beginPosition - endPosition) > window.innerHeight / 5 &&
+              this.scrollAllawService.allaw && allawScroll) {
             this.renderer.removeClass(this.elementRef.nativeElement, 'show');
           }
         });
