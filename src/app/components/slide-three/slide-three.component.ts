@@ -57,7 +57,7 @@ export class SlideThreeComponent extends DnngComponentBase implements OnInit {
           allawScroll = true;
           setTimeout(() => {
             allawScroll = false;
-          }, 100);
+          }, 200);
         });
         fromEvent(window, 'touchmove').listen(this, (event) => {
           endPosition = (event as TouchEvent).touches[0].clientY;

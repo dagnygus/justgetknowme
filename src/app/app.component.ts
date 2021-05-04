@@ -97,7 +97,7 @@ export class AppComponent extends DnngComponentBase implements OnInit {
           allawTouch = true;
           setTimeout(() => {
             allawTouch = false;
-          }, 100);
+          }, 200);
         });
         fromEvent(window, 'touchmove').listen(this, (event) => {
           endPosition = (event as TouchEvent).touches[0].clientY;
